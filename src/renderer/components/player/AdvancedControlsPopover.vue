@@ -52,15 +52,26 @@
         <i class="ri-close-line"></i>
       </div>
       <h3>{{ t('player.playBar.playbackSpeed') }}</h3>
-      <div class="speed-options">
-        <div 
-          v-for="option in playbackRateOptions" 
-          :key="option.key"
-          class="speed-option"
-          :class="{ 'active': playbackRate === option.key }"
-          @click="selectSpeed(option.key)"
-        >
-          {{ option.label }}
+      <div class="speed-controls">
+        <div class="speed-options">
+          <div 
+            v-for="option in playbackRateOptions" 
+            :key="option.key"
+            class="speed-option"
+            :class="{ 'active': playbackRate === option.key }"
+            @click="selectSpeed(option.key)"
+          >
+            {{ option.label }}
+          </div>
+        </div>
+        <div class="speed-slider">
+          <n-slider
+            :value="playbackRate"
+            :min="0.25"
+            :max="2.0"
+            :step="0.01"
+            @update:value="selectSpeed"
+          />
         </div>
       </div>
     </div>
@@ -70,7 +81,7 @@
 <script lang="ts" setup>
 import { ref, computed, h, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { DropdownOption } from 'naive-ui';
+import { DropdownOption, NSlider } from 'naive-ui';
 import { usePlayerStore } from '@/store/modules/player';
 import EqControl from '@/components/EQControl.vue';
 import SleepTimer from '@/components/player/SleepTimer.vue';
@@ -177,7 +188,6 @@ const handleSelect = (key: string) => {
 // 选择播放速度
 const selectSpeed = (speed: number) => {
   playerStore.setPlaybackRate(speed);
-  showSpeedModal.value = false;
 };
 
 </script>
@@ -256,8 +266,12 @@ const selectSpeed = (speed: number) => {
     @apply text-lg font-medium mb-4 text-center;
   }
 
+  .speed-controls {
+    @apply my-8 mx-4;
+  }
+
   .speed-options {
-    @apply flex flex-wrap justify-center gap-4 my-8 mx-4;
+    @apply flex flex-wrap justify-center gap-4 mb-4;
 
     .speed-option {
       @apply py-2 px-4 rounded-full cursor-pointer transition-all;
@@ -268,6 +282,10 @@ const selectSpeed = (speed: number) => {
         @apply bg-green-500 text-white;
       }
     }
+  }
+
+  .speed-slider {
+    @apply mt-4;
   }
 }
 
